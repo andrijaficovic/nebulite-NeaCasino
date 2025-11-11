@@ -2053,17 +2053,90 @@ body.menu-open {
 }
 
 .trending-casinos__code {
-	font-size: 1.125rem;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.65rem;
+	font-size: 1.05rem;
 	font-weight: 700;
 	line-height: 1.2;
-	border: 1px dotted #fff;
-	padding: 0.5rem;
+	border: 1px dashed rgba(255, 255, 255, 0.7);
+	padding: 0.65rem 1rem;
 	color: #fff;
 	background-color: #170d0d;
+	border-radius: 999px;
+	cursor: pointer;
+	transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+	font-family: inherit;
+	text-transform: uppercase;
 }
 
-.trending-casinos__code span {
-	background: transparent;
+.trending-casinos__code:hover,
+.trending-casinos__code:focus-visible {
+	background-color: #2c1717;
+	border-color: #f6c543;
+	transform: translateY(-1px);
+}
+
+.trending-casinos__code:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(246, 197, 67, 0.35);
+}
+
+.trending-casinos__code::after {
+	content: attr(data-copied-label);
+	position: absolute;
+	top: auto;
+	bottom: -2.2rem;
+	left: 50%;
+	transform: translate(-50%, 10px);
+	background: rgba(23, 13, 13, 0.9);
+	color: #f6c543;
+	font-size: 0.75rem;
+	font-weight: 600;
+	padding: 0.35rem 0.7rem;
+	border-radius: 999px;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.trending-casinos__code.is-copied::after {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+@media (max-width: 768px) {
+
+	.trending-casinos__code {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+.trending-casinos__code-label {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.9);
+	letter-spacing: 0.08em;
+}
+
+.trending-casinos__code-value {
+	color: #f6c543;
+}
+
+.trending-casinos__code-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+}
+
+.trending-casinos__code-icon svg {
+	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 .trending-casinos__cta {

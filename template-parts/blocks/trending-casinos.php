@@ -119,9 +119,29 @@ $rank_colors = array(
 							</div>
 						<?php endif; ?>
 
-						<?php if ( ! empty( $code ) ) : ?>
+						<?php
+						if ( ! empty( $code ) ) :
+							$code_value          = trim( wp_strip_all_tags( (string) $code ) );
+							$copy_success_label  = __( 'Copied!', 'nebulite' );
+							$copy_button_sr_text = __( 'Copy casino code to clipboard', 'nebulite' );
+						?>
 							<div class="trending-casinos__code-section">
-								<div class="trending-casinos__code">Code: <span><?php echo wp_kses_post( $code ); ?></span></div>
+								<button
+									type="button"
+									class="trending-casinos__code"
+									data-copy-text="<?php echo esc_attr( $code_value ); ?>"
+									data-copied-label="<?php echo esc_attr( $copy_success_label ); ?>"
+								>
+									<span class="trending-casinos__code-label"><?php esc_html_e( 'Code:', 'nebulite' ); ?></span>
+									<span class="trending-casinos__code-value"><?php echo esc_html( $code_value ); ?></span>
+									<span class="trending-casinos__code-icon" aria-hidden="true">
+										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 408 480" role="img" focusable="false">
+											<path fill="currentColor" d="M299 5v43H43v299H0V48q0-18 12.5-30.5T43 5h256zm64 86q17 0 29.5 12.5T405 133v299q0 18-12.5 30.5T363 475H128q-18 0-30.5-12.5T85 432V133q0-17 12.5-29.5T128 91h235zm0 341V133H128v299h235z"/>
+										</svg>
+									</span>
+									<span class="screen-reader-text"><?php echo esc_html( $copy_button_sr_text ); ?></span>
+									<span class="trending-casinos__code-feedback screen-reader-text" aria-live="polite"></span>
+								</button>
 							</div>
 						<?php endif; ?>
 						

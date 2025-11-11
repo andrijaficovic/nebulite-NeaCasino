@@ -102,6 +102,15 @@ add_action( 'acf/init', function() {
 		'keywords'        => array( 'casino', 'trending', 'top', 'ranking' ),
 		'mode'            => 'preview',
 		'supports'        => array( 'align' => false, 'anchor' => true ),
+		'enqueue_assets'  => function() {
+			wp_enqueue_script(
+				'nebulite-trending-casinos',
+				get_template_directory_uri() . '/js/trending-casinos.js',
+				array(),
+				_S_VERSION,
+				true
+			);
+		},
 	) );
 } );
 

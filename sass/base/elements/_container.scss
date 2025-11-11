@@ -1,0 +1,24 @@
+/**
+ * Global Container
+ * Provides consistent width constraints and padding across the site
+ */
+.container, .wp-block-group {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: $container__padding-mobile;
+	padding-right: $container__padding-mobile;
+
+	// Tablet devices (768px and up)
+	@media (min-width: 768px) {
+		padding-left: $container__padding-tablet;
+		padding-right: $container__padding-tablet;
+	}
+
+	// Desktop devices (1024px and up)
+	@media (min-width: 1024px) {
+		max-width: $container__max-width;
+		padding-left: $container__padding-desktop;
+		padding-right: $container__padding-desktop;
+	}
+}

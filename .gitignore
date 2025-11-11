@@ -1,0 +1,8 @@
+node_modules
+.DS_Store
+*.log
+*.map
+style-rtl.css
+.sass-cache/
+.vscode/
+.idea/

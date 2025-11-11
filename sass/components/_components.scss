@@ -1,0 +1,59 @@
+/* Navigation
+--------------------------------------------- */
+@import "navigation/navigation";
+
+/* Posts and pages
+--------------------------------------------- */
+@import "content/posts-and-pages";
+
+/* Comments
+--------------------------------------------- */
+@import "comments/comments";
+
+/* Widgets
+--------------------------------------------- */
+@import "widgets/widgets";
+
+/* Media
+--------------------------------------------- */
+@import "media/media";
+
+/* Captions
+--------------------------------------------- */
+@import "media/captions";
+
+/* Galleries
+--------------------------------------------- */
+@import "media/galleries";
+
+/* Casino List
+--------------------------------------------- */
+@import "../components/casino-list";
+
+/* Hero Block
+--------------------------------------------- */
+@import "../components/hero";
+
+/* Why Choose Casino Block
+--------------------------------------------- */
+@import "../components/why-choose-casino";
+
+/* Trending Casinos Block
+--------------------------------------------- */
+@import "../components/trending-casinos";
+
+/* FAQ Section Block
+--------------------------------------------- */
+@import "../components/faq-section";
+
+
+
+/* Table of Contents
+--------------------------------------------- */
+// @import "../components/table-of-contents";
+
+/* Error Pages
+--------------------------------------------- */
+@import "../components/404";
+
+@import "./footer";

@@ -2,7 +2,22 @@
 	'use strict';
 
 	function initCasinoList( $root ) {
-		var perPage = parseInt( $root.data( 'per-page' ), 10 ) || 10;
+		var idsData = $root.attr( 'data-casino-ids' );
+		if ( ! idsData ) {
+			return;
+		}
+
+		var ids;
+		try {
+			ids = JSON.parse( idsData );
+		} catch ( error ) {
+			ids = [];
+		}
+
+		if ( ! Array.isArray( ids ) || ids.length === 0 ) {
+			return;
+		}
+
 		var $tableBody = $root.find( '.casino-table__body' );
 		var $loadMore = $root.find( '.casino-list__load-more' );
 
@@ -10,47 +25,65 @@
 			return;
 		}
 
-		function request( page, callback ) {
+		var chunkSize = parseInt( $root.attr( 'data-chunk-size' ), 10 ) || 15;
+		var offset = parseInt( $root.attr( 'data-offset' ), 10 ) || 0;
+
+		if ( offset >= ids.length ) {
+			$loadMore.remove();
+			return;
+		}
+
+		function formatRemainingText( remaining ) {
+			if ( typeof remaining !== 'number' || remaining <= 0 ) {
+				return '';
+			}
+
+			return remaining + ' περισσότερα για εξερεύνηση';
+		}
+
+		$loadMore.text( formatRemainingText( ids.length - offset ) );
+
+		function loadMoreHandler() {
+			var $btn = $( this );
+			var nextIds = ids.slice( offset, offset + chunkSize );
+
+			if ( nextIds.length === 0 ) {
+				$btn.remove();
+				return;
+			}
+
+			$btn.prop( 'disabled', true ).text( 'Loading...' );
+
 			$.ajax( {
 				type: 'POST',
 				url: ( window.NebuliteCasinoList && window.NebuliteCasinoList.ajaxUrl ) || '',
 				data: {
 					action: 'nebulite_casino_list',
 					nonce: window.NebuliteCasinoList ? window.NebuliteCasinoList.nonce : '',
-					per_page: perPage,
-					page: page
+					ids: nextIds,
+					offset: offset
 				},
 				dataType: 'json'
-			} ).always( function( res ) {
-				if ( typeof callback === 'function' ) {
-					callback( res );
-				}
-			} );
-		}
-
-		function loadMoreHandler() {
-			var $btn = $( this );
-			var nextPage = parseInt( $btn.data( 'next-page' ), 10 ) || 2;
-
-			$btn.prop( 'disabled', true ).text( 'Loading...' );
-
-			request( nextPage, function( res ) {
+			} ).done( function( res ) {
 				$btn.prop( 'disabled', false );
 
-				if ( res && res.success && res.data && res.data.html ) {
-					$tableBody.append( res.data.html );
-
-					var totalShown = nextPage * perPage;
-					var remaining = Math.max( 0, ( res.data.found || 0 ) - totalShown );
-
-					if ( remaining > 0 ) {
-						$btn.data( 'next-page', nextPage + 1 ).text( remaining + ' more to explore' );
-					} else {
-						$btn.remove();
-					}
-				} else {
+				if ( ! res || ! res.success || ! res.data || ! res.data.html ) {
 					$btn.text( 'Error loading casinos' );
+					return;
 				}
+
+				$tableBody.append( res.data.html );
+				offset += nextIds.length;
+				$root.attr( 'data-offset', offset );
+
+				var remaining = ids.length - offset;
+				if ( remaining > 0 ) {
+					$btn.text( formatRemainingText( remaining ) );
+				} else {
+					$btn.remove();
+				}
+			} ).fail( function() {
+				$btn.prop( 'disabled', false ).text( 'Error loading casinos' );
 			} );
 		}
 

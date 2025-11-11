@@ -20,7 +20,7 @@ add_action( 'acf/init', function() {
 	acf_register_block_type( array(
 		'name'            => 'casino-list',
 		'title'           => __( 'Casino List', 'nebulite' ),
-		'description'     => __( 'Lists casinos with rating-based ordering and load more.', 'nebulite' ),
+		'description'     => __( 'Displays the casinos selected within the block settings.', 'nebulite' ),
 		'render_callback' => 'nebulite_render_block_casino_list',
 		'category'        => 'widgets',
 		'icon'            => 'list-view',
@@ -157,25 +157,68 @@ function nebulite_get_margin_bottom( $value ) {
  * @param bool   $is_preview Whether previewing.
  */
 function nebulite_render_block_casino_list( $block, $content = '', $is_preview = false ) {
-	$context = array(
-		'per_page' => 10,
-		'page'     => 1,
-	);
-
-	// Initial query (first page).
-	$query = nebulite_get_casino_query( $context );
-
-	// Load template part.
 	$block_id = 'casino-list-' . ( isset( $block['id'] ) ? sanitize_key( $block['id'] ) : wp_generate_uuid4() );
 	$margin_bottom = get_field( 'margin_bottom' ) ?: 'medium'; // Default to medium
+	$selected_casinos = get_field( 'choose_casinos' );
+	$chunk_size = 15;
+
+	$casinos = array();
+	if ( ! empty( $selected_casinos ) && is_array( $selected_casinos ) ) {
+		foreach ( $selected_casinos as $casino_item ) {
+			if ( $casino_item instanceof WP_Post ) {
+				$casinos[] = $casino_item->ID;
+			} elseif ( is_numeric( $casino_item ) ) {
+				$casinos[] = (int) $casino_item;
+			} elseif ( is_array( $casino_item ) && isset( $casino_item['ID'] ) ) {
+				$casinos[] = (int) $casino_item['ID'];
+			}
+		}
+	}
 	
+	$initial_casinos = array_slice( $casinos, 0, $chunk_size );
+
 	$vars = array(
 		'block_id' => $block_id,
-		'context'  => $context,
-		'query'    => $query,
+		'casinos'  => $casinos,
+		'initial_casinos' => $initial_casinos,
+		'chunk_size' => $chunk_size,
 		'margin_bottom' => nebulite_get_margin_bottom( $margin_bottom ),
 	);
 	nebulite_load_template( 'template-parts/blocks/casino-list.php', $vars );
+}
+
+/**
+ * AJAX: Render additional casino cards.
+ */
+add_action( 'wp_ajax_nebulite_casino_list', 'nebulite_ajax_casino_list' );
+add_action( 'wp_ajax_nopriv_nebulite_casino_list', 'nebulite_ajax_casino_list' );
+function nebulite_ajax_casino_list() {
+	check_ajax_referer( 'nebulite_casino_list', 'nonce' );
+
+	$ids = isset( $_POST['ids'] ) ? wp_unslash( $_POST['ids'] ) : array();
+	if ( empty( $ids ) || ! is_array( $ids ) ) {
+		wp_send_json_error( array( 'message' => __( 'No casinos provided.', 'nebulite' ) ) );
+	}
+
+	$ids = array_map( 'intval', $ids );
+	$ids = array_filter( $ids );
+
+	$offset = isset( $_POST['offset'] ) ? (int) $_POST['offset'] : 0;
+
+	if ( empty( $ids ) ) {
+		wp_send_json_error( array( 'message' => __( 'No valid casinos provided.', 'nebulite' ) ) );
+	}
+
+	ob_start();
+	foreach ( $ids as $position => $casino_id ) {
+		nebulite_render_casino_card( $casino_id, $offset + $position + 1 );
+	}
+	$html = ob_get_clean();
+
+	wp_send_json_success( array(
+		'html'  => $html,
+		'count' => count( $ids ),
+	) );
 }
 
 /**
@@ -298,67 +341,9 @@ function nebulite_load_template( $relative_path, array $vars = array() ) {
 }
 
 /**
- * Build WP_Query for casinos based on context.
- */
-function nebulite_get_casino_query( array $context ) {
-	$per_page = max( 1, (int) ( $context['per_page'] ?? 10 ) );
-	$page     = max( 1, (int) ( $context['page'] ?? 1 ) );
-
-	$args = array(
-		'post_type'           => 'casino',
-		'post_status'         => 'publish',
-		'posts_per_page'      => $per_page,
-		'paged'               => $page,
-		'ignore_sticky_posts' => true,
-		'no_found_rows'       => false,
-		'meta_key'            => 'rating',
-		'meta_type'           => 'NUMERIC',
-		'orderby'             => array(
-			'meta_value_num' => 'DESC',
-			'menu_order'     => 'ASC',
-			'date'           => 'DESC',
-		),
-	);
-
-	return new WP_Query( $args );
-}
-
-/**
- * AJAX: Fetch casinos (pagination).
- */
-add_action( 'wp_ajax_nebulite_casino_list', 'nebulite_ajax_casino_list' );
-add_action( 'wp_ajax_nopriv_nebulite_casino_list', 'nebulite_ajax_casino_list' );
-function nebulite_ajax_casino_list() {
-	check_ajax_referer( 'nebulite_casino_list', 'nonce' );
-
-	$per_page = isset( $_POST['per_page'] ) ? (int) $_POST['per_page'] : 10;
-	$page     = isset( $_POST['page'] ) ? (int) $_POST['page'] : 1;
-	$context = compact( 'per_page', 'page' );
-
-	$query = nebulite_get_casino_query( $context );
-
-	ob_start();
-	if ( $query->have_posts() ) {
-		while ( $query->have_posts() ) {
-			$query->the_post();
-			nebulite_render_casino_card( get_the_ID() );
-		}
-		wp_reset_postdata();
-	}
-	$html = ob_get_clean();
-
-	wp_send_json_success( array(
-		'html'       => $html,
-		'found'      => (int) $query->found_posts,
-		'page'       => $page,
-		'per_page'   => $per_page,
-	) );
-}
-
-/**
  * Render a single casino card (used by template and AJAX).
  */
-function nebulite_render_casino_card( $post_id ) {
+function nebulite_render_casino_card( $post_id, $position = null ) {
 	$image  = get_field( 'image', $post_id );
 	$rating = (float) get_field( 'rating', $post_id );
 	$bonus  = (string) get_field( 'bonus', $post_id );
@@ -380,9 +365,19 @@ function nebulite_render_casino_card( $post_id ) {
 	}
 
 	?>
+	<?php
+	$logo_background = get_field( 'image_background_color', $post_id );
+	$logo_background_style = '';
+	if ( ! empty( $logo_background ) && is_string( $logo_background ) ) {
+		$logo_background_style = ' style="background-color: ' . esc_attr( $logo_background ) . ';"';
+	}
+	?>
 	<div class="casino-table__row" data-post-id="<?php echo (int) $post_id; ?>">
+		<?php if ( null !== $position ) : ?>
+			<span class="casino-table__position"><?php echo (int) $position; ?></span>
+		<?php endif; ?>
 		<div class="casino-table__cell casino-table__cell--casino">
-			<div class="casino-table__logo-wrapper">
+			<div class="casino-table__logo-wrapper"<?php echo $logo_background_style; ?>>
 				<img class="casino-table__logo" src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( get_the_title( $post_id ) ); ?>" loading="lazy">
 			</div>
 			<div class="casino-table__info">
@@ -391,26 +386,7 @@ function nebulite_render_casino_card( $post_id ) {
 		</div>
 		<div class="casino-table__cell casino-table__cell--bonus">
 			<?php if ( ! empty( $bonus ) ) : ?>
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<g clip-path="url(#clip0_6032_7637)">
-					<rect width="20" height="20" rx="10" fill="#150B2B"/>
-					<path d="M3.55212 8.08801H16.4463C16.585 8.08801 16.6971 8.2001 16.6971 8.33886V20.1861C16.6971 20.3248 16.5851 20.4369 16.4463 20.4369H3.55212C3.41336 20.4369 3.30127 20.3248 3.30127 20.1861V8.33886C3.30127 8.2001 3.41336 8.08801 3.55212 8.08801Z" fill="#EF3A50"/>
-					<path d="M8.19824 12.1339H11.8007V20.4374H8.19824V12.1339Z" fill="#FDD33A"/>
-					<path d="M8.19824 12.1339H11.8007V13.4895H8.19824V12.1339Z" fill="#D2A128"/>
-					<path d="M6.85558 7.47891C5.40127 7.45491 5.26072 8.87631 5.25184 8.97415C5.24738 9.07023 5.18691 9.15916 5.09083 9.19562C4.96186 9.24542 4.81685 9.17962 4.76705 9.05065C4.5945 8.59788 4.53224 7.91832 4.59538 7.22273C4.64784 6.6499 4.78485 6.06103 5.0152 5.5727C5.25981 5.055 5.61029 4.64496 6.07994 4.46616C6.28454 4.38878 6.50868 4.35586 6.75507 4.37808C8.08575 4.49905 9.95459 6.83133 10.0907 7.00298C10.1289 7.04744 10.1521 7.10528 10.1521 7.16841V7.68078C10.1521 7.70657 10.1476 7.73237 10.1396 7.75728C10.0978 7.88892 9.95641 7.96187 9.82475 7.91917C9.82117 7.91832 8.55987 7.50737 6.85558 7.47891Z" fill="#FDD33A"/>
-					<path d="M14.7464 8.97409C14.7374 8.87625 14.596 7.45482 13.1426 7.47885C11.4383 7.50731 10.177 7.91826 10.1734 7.91917C10.0418 7.96185 9.90035 7.88892 9.85855 7.75728C9.85055 7.73237 9.84609 7.70657 9.84609 7.68078H9.84521V7.16842C9.84521 7.10528 9.86922 7.04745 9.90747 7.00298C10.0436 6.8313 11.9124 4.49905 13.2431 4.37808C13.4895 4.35587 13.7136 4.38875 13.9182 4.46617C14.3879 4.64497 14.7384 5.055 14.983 5.5727C15.2133 6.06106 15.3503 6.6499 15.4028 7.22273C15.4659 7.91832 15.4028 8.59788 15.2311 9.05065C15.1813 9.17962 15.0363 9.24546 14.9074 9.19563C14.8113 9.1591 14.7508 9.07017 14.7464 8.97409Z" fill="#FDD33A"/>
-					<path d="M9.9998 6.54053C10.5139 6.54053 10.98 6.74955 11.3171 7.08669C11.6543 7.4238 11.8624 7.889 11.8624 8.40315C11.8624 8.91819 11.6543 9.38339 11.3171 9.7205C10.98 10.0576 10.5139 10.2667 9.9998 10.2667C9.48568 10.2667 9.01957 10.0576 8.68246 9.7205C8.34535 9.38339 8.13721 8.91819 8.13721 8.40315C8.13721 7.88903 8.34535 7.42383 8.68246 7.08669C9.01957 6.74955 9.48568 6.54053 9.9998 6.54053Z" fill="#D2A128"/>
-					<path d="M2.47253 8.08801H17.5264C17.6651 8.08801 17.7772 8.2001 17.7772 8.33886V11.8826C17.7772 12.0214 17.6652 12.1335 17.5264 12.1335H2.47253C2.33377 12.1335 2.22168 12.0214 2.22168 11.8826V8.33886C2.22171 8.2001 2.33377 8.08801 2.47253 8.08801Z" fill="#FF4A69"/>
-					<path d="M7.49805 8.08801H12.5006V12.1334H7.49805V8.08801Z" fill="#FDD33A"/>
-					<path fill-rule="evenodd" clip-rule="evenodd" d="M8.16337 8.08818C8.19274 7.91471 8.24608 7.74928 8.31992 7.59627C7.89385 7.53489 7.39752 7.48776 6.85581 7.47885C6.19135 7.46727 5.80087 7.75904 5.57227 8.08815H7.49803L8.16337 8.08818Z" fill="#D2A128"/>
-					<path fill-rule="evenodd" clip-rule="evenodd" d="M11.8353 8.08787C11.8059 7.91441 11.7525 7.74897 11.6787 7.59597C12.1048 7.53459 12.6011 7.48746 13.1428 7.47854C13.8073 7.46696 14.1978 7.75873 14.4264 8.08784H12.5006L11.8353 8.08787Z" fill="#D2A128"/>
-					</g>
-					<defs>
-					<clipPath id="clip0_6032_7637">
-					<rect width="20" height="20" rx="10" fill="white"/>
-					</clipPath>
-					</defs>
-				</svg>		
+				
 				<div class="casino-table__bonus"><?php echo wp_kses_post( $bonus ); ?></div>
 			<?php endif; ?>
 		</div>

@@ -142,7 +142,7 @@ add_action( 'widgets_init', 'nebulite_widgets_init' );
 function nebulite_scripts() {
 	wp_enqueue_style(
 		'nebulite-google-fonts',
-		'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap',
+		'https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap',
 		array(),
 		null
 	);

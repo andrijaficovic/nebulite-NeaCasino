@@ -9,7 +9,7 @@
 		padding: 0.75rem 1.5rem;
 		border: 1px solid #e5e7eb;
 		background: #fff;
-		color: #3e47e0;
+		color: #670303;
 		border-radius: 6px;
 		cursor: pointer;
 		font-size: 0.875rem;
@@ -22,7 +22,8 @@
 		font-weight: 500;
 
 		&:hover {
-			background: #f2f2fe;
+			background: #670303;
+			color: #fff;
 			border-color: #9ca3af;
 		}
 	}
@@ -46,7 +47,7 @@
 	align-items: center;
 	padding: 0.75rem 1.25rem;
 	border-bottom: 2px solid #e5e7eb;
-	background: #f9fafb;
+	background: #670303;
 	border-radius: 8px 8px 0 0;
 
 	@media (max-width: 1023px) {
@@ -63,7 +64,7 @@
 .casino-table__header-cell {
 	font-size: 0.875rem;
 	font-weight: 600;
-	color: #374151;
+	color: #fff;
 	
 	letter-spacing: 0.05em;
 }
@@ -75,9 +76,9 @@
 	gap: 1rem;
 	align-items: center;	
 	padding: 1.25rem;
-	border: 1px solid #e5e7eb;
+	border: 1px solid #f09292;
 	border-radius: 8px;
-	background: #fff;
+	background: #f8f2f2;
 	transition: all 0.2s ease;
 	position: relative;
 
@@ -85,7 +86,7 @@
 
 	&:hover {
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-		border-color: #d1d5db;
+		border-color: #670303;
 	}
 
 	@media (max-width: 1023px) {
@@ -95,7 +96,7 @@
 		.casino-table__cell--rating{
 			position: absolute;
 			top: 18px;
-			right: 18px;			
+			right: 18px;					
 		}
 	}
 }
@@ -212,14 +213,14 @@
 	color: #6b7280;
 	white-space: nowrap;
 	flex-shrink: 0;
-	background-color: #f8f9fc;
+	background-color: #670303;
 	padding: 8px 12px;
 	border-radius: 6px;
 
 	@media (max-width: 1023px) {
 		width: 100%;
 		justify-content: center;
-		padding: 0.5rem 0;
+		padding: 8px 5px;	
 	}
 }
 
@@ -231,11 +232,11 @@
 
 .casino-table__rating-value {
 	font-weight: 600;
-	color: #111827;
+	color: #fff;
 }
 
 .casino-table__rating-max {
-	color: #4b5563;
+	color: #fff;
 }
 
 .casino-table__bonus {
@@ -285,12 +286,15 @@
 	font-weight: 500;
 
 	&--primary {
-		background: #3e47e0;
-		color: #fff;
+		background: #f6c543;
+		color: #170d0d;
 		text-transform: uppercase;
 		&:hover {
-			background: #f8f9fc;
-			color: #3e47e0;
+			background: #e5b030;
+			color: #ffffff;
+			transform: translateY(-2px);
+			box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+			cursor: pointer;
 		}
 	}
 }
@@ -333,7 +337,7 @@
 	width: 1.5rem;
 	height: 1.5rem;
 	border-radius: 8px 0;
-	background: #3e47e0;
+	background: #670303;
 	color: #fff;
 	font-weight: 600;
 	font-size: 0.9375rem;

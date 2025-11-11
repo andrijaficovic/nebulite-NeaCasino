@@ -1922,7 +1922,7 @@ body.menu-open {
 }
 
 .trending-casinos__card {
-	background: #fff;
+	background: linear-gradient(180deg, #170d0d 0%, #670303 100%);
 	border: 1px solid #e5e7eb;
 	border-radius: 8px;
 	padding: 1.5rem;
@@ -1939,7 +1939,7 @@ body.menu-open {
 
 .trending-casinos__header {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	gap: 1rem;
 }
 
@@ -1990,7 +1990,8 @@ body.menu-open {
 	font-size: 1.25rem;
 	font-weight: 600;
 	line-height: 1.3;
-	color: #111827;
+	color: #f6c543;
+	text-align: center;
 }
 
 .trending-casinos__rating {
@@ -1998,7 +1999,7 @@ body.menu-open {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
-	background: #f3f4f6;
+	background: #670303;
 	padding: 0.5rem 0.75rem;
 	border-radius: 20px;
 }
@@ -2012,17 +2013,16 @@ body.menu-open {
 .trending-casinos__rating-value {
 	font-size: 0.875rem;
 	font-weight: 600;
-	color: #111827;
+	color: #fff;
 }
 
 .trending-casinos__rating-max {
 	font-size: 0.75rem;
-	color: #9ca3af;
+	color: #fff;
 }
 
 .trending-casinos__bonus-section {
-	background: #fff;
-	border: 1px solid #e5e7eb;
+	background: transparent;
 	border-radius: 8px;
 	padding: 1rem 1.25rem;
 	display: flex;
@@ -2031,25 +2031,49 @@ body.menu-open {
 }
 
 .trending-casinos__bonus {
-	font-size: 1.125rem;
-	font-weight: 700;
-	color: #111827;
-	line-height: 1.2;
+	width: 100%;
 	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: #fff;
+	line-height: 1.2;
 }
 
-.trending-casinos__bonus svg {
-	margin-left: 7px;
+.trending-casinos__bonus span {
+	color: #f6c543;
+}
+
+.trending-casinos__code-section {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.trending-casinos__code {
+	font-size: 1.125rem;
+	font-weight: 700;
+	line-height: 1.2;
+	border: 1px dotted #fff;
+	padding: 0.5rem;
+	color: #fff;
+	background-color: #170d0d;
+}
+
+.trending-casinos__code span {
+	background: transparent;
 }
 
 .trending-casinos__cta {
 	padding: 0.75rem 1.5rem;
-	background: #3e47e0;
-	color: #fff;
+	background: #f6c543;
+	color: #170d0d;
 	text-decoration: none;
 	border-radius: 6px;
 	font-size: 0.875rem;
-	font-weight: 500;
+	font-weight: 700;
 	text-align: center;
 	transition: all 0.2s ease;
 	text-transform: uppercase;
@@ -2057,8 +2081,11 @@ body.menu-open {
 }
 
 .trending-casinos__cta:hover {
-	background: #f8f9fc;
-	color: #3e47e0;
+	background: #e5b030;
+	color: #fff;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
 }
 
 /* FAQ Section Block

@@ -2248,7 +2248,7 @@ body.menu-open {
 }
 
 .faq-section__question:hover {
-	color: #3e47e0;
+	color: #670303;
 }
 
 .faq-section__question[aria-expanded="true"] .faq-section__icon {
@@ -2286,7 +2286,7 @@ body.menu-open {
 	align-items: center;
 	justify-content: center;
 	transition: transform 0.3s ease;
-	color: #3e47e0;
+	color: #f6c543;
 }
 
 .faq-section__icon svg {

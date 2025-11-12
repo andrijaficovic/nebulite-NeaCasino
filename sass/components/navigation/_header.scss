@@ -1,16 +1,14 @@
 .site-header {
-	position: fixed;
+	position: sticky;
 	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 1000;
-	background: transparent;
-	transition: background 0.3s ease, backdrop-filter 0.3s ease;
+	z-index: 100;
+	background: #170d0d;
+	backdrop-filter: none;
+	box-shadow: none;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
 
-	// Optional: Add background when scrolled
 	&.scrolled {
-		background: rgba(10, 2, 33, 0.95);
-		backdrop-filter: blur(10px);
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 	}
 
 	.container {
@@ -68,7 +66,7 @@
 			width: 80%;
 			max-width: 400px;
 			height: 100vh;
-			background: rgba(10, 2, 33, 0.98);
+			background: #170d0d;
 			flex-direction: column;
 			align-items: flex-start;
 			padding: 5rem 2rem 2rem;
@@ -151,7 +149,7 @@
 			}
 
 			&:hover {
-				color: #a5aafd;
+				color: #f6c543;
 			}
 		}
 
@@ -161,7 +159,7 @@
 			top: calc(100% + 0.5rem);
 			left: 0;
 			min-width: 220px;
-			background: rgba(10, 2, 33, 0.98);
+			background: #170d0d;
 			backdrop-filter: blur(10px);
 			list-style: none;
 			margin: 0;
@@ -219,7 +217,7 @@
 
 					&:hover {
 						background: rgba(255, 255, 255, 0.1);
-						color: #a5aafd;
+						color: #f6c543;
 					}
 
 					&:first-child {

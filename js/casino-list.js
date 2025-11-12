@@ -52,7 +52,7 @@
 				return;
 			}
 
-			$btn.prop( 'disabled', true ).text( 'Loading...' );
+			$btn.prop( 'disabled', true ).text( 'Φόρτωση…' );
 
 			$.ajax( {
 				type: 'POST',

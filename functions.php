@@ -168,7 +168,7 @@ function nebulite_critical_css() {
 		.site-header{position:sticky;top:0;z-index:100;background:#170d0d}
 		.hero-block{position:relative;width:100%;min-height:500px;overflow:hidden;background-size:contain;background-position:right bottom;background-color:#0a0021;display:flex;align-items:center;padding:4rem 0}
 		.hero-block::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:1;pointer-events:none}
-		.container{max-width:1200px;margin:0 auto;padding:0 1.5rem;position:relative;z-index:2}
+		.container{max-width:1250px;margin:0 auto;padding:0 1.5rem;position:relative;z-index:2}
 		@media (max-width:768px){.hero-block{min-height:400px;padding:3rem 0}.hero-block::before{background:rgba(0,0,0,.4)}}
 	</style>
 	<?php

@@ -704,7 +704,7 @@ textarea {
 	padding: 1.5rem 0;
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.site-header__content {
 		padding: 1rem 0;
@@ -745,7 +745,7 @@ textarea {
 	position: relative;
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu {
 		position: fixed;
@@ -771,7 +771,7 @@ textarea {
 	position: relative;
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu li {
 		width: 100%;
@@ -800,21 +800,21 @@ textarea {
 	pointer-events: none;
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu li.menu-item-has-children > a::after {
 		right: 0;
 	}
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu li.menu-item-has-children > a {
 		padding-right: 2.5rem;
 	}
 }
 
-@media (min-width: 1061px) {
+@media (min-width: 1101px) {
 
 	.main-navigation .nav-menu li.menu-item-has-children:hover > a::after {
 		transform: translateY(-50%) rotate(180deg);
@@ -838,7 +838,7 @@ textarea {
 	white-space: nowrap;
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu a {
 		padding: 1rem 0;
@@ -871,7 +871,7 @@ textarea {
 	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu .sub-menu {
 		position: static;
@@ -896,7 +896,7 @@ textarea {
 	padding: 0;
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu .sub-menu li {
 		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -916,7 +916,7 @@ textarea {
 	transition: background 0.2s ease, color 0.2s ease;
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu .sub-menu li a {
 		padding: 0.75rem 1rem 0.75rem 2rem;
@@ -941,7 +941,7 @@ textarea {
 	border-radius: 8px;
 }
 
-@media (min-width: 1061px) {
+@media (min-width: 1101px) {
 
 	.main-navigation .nav-menu .menu-item-has-children:hover > .sub-menu {
 		opacity: 1;
@@ -951,7 +951,7 @@ textarea {
 	}
 }
 
-@media (min-width: 1061px) {
+@media (min-width: 1101px) {
 
 	.main-navigation .nav-menu .sub-menu:hover {
 		opacity: 1;
@@ -960,7 +960,7 @@ textarea {
 	}
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation .nav-menu .menu-item-has-children.submenu-open > .sub-menu {
 		opacity: 1 !important;
@@ -971,7 +971,7 @@ textarea {
 	}
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.main-navigation.toggled .nav-menu {
 		right: 0;
@@ -993,7 +993,7 @@ textarea {
 	justify-content: center;
 }
 
-@media (max-width: 1060px) {
+@media (max-width: 1100px) {
 
 	.menu-toggle {
 		display: flex;

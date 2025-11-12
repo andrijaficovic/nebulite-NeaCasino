@@ -9,6 +9,8 @@
 			var titleElement = block.querySelector( '.hero-block__title' );
 			var descriptionElement = block.querySelector( '.hero-block__description' );
 			var resultsElement = block.querySelector( '.hero-block__results' );
+			var ctaWrapperElement = block.querySelector( '.hero-block__cta-wrapper' );
+			var featuredCasinosElement = block.querySelector( '.hero-block__featured-casinos' );
 
 			// Animate text elements when block enters viewport
 			var textObserver = new IntersectionObserver( function( entries ) {
@@ -33,6 +35,20 @@
 							setTimeout( function() {
 								resultsElement.classList.add( 'hero-block__results--animated' );
 							}, 400 );
+						}
+
+						// Animate CTA button
+						if ( ctaWrapperElement ) {
+							setTimeout( function() {
+								ctaWrapperElement.classList.add( 'hero-block__cta-wrapper--animated' );
+							}, 600 );
+						}
+
+						// Animate featured casinos
+						if ( featuredCasinosElement ) {
+							setTimeout( function() {
+								featuredCasinosElement.classList.add( 'hero-block__featured-casinos--animated' );
+							}, 800 );
 						}
 
 						textObserver.unobserve( entry.target );
@@ -100,6 +116,65 @@
 			numberElements.forEach( function( element ) {
 				numberObserver.observe( element );
 			} );
+
+			// Handle CTA button smooth scroll to casino list
+			var ctaButton = block.querySelector( '.hero-block__cta' );
+			if ( ctaButton ) {
+				ctaButton.addEventListener( 'click', function( e ) {
+					var href = this.getAttribute( 'href' );
+					
+					if ( ! href || href === '#' ) {
+						return;
+					}
+					
+					var targetElement = null;
+					var targetId = null;
+					
+					// Check if it's a hash link
+					if ( href.indexOf( '#' ) !== -1 ) {
+						var hashIndex = href.indexOf( '#' );
+						targetId = href.substring( hashIndex + 1 );
+						
+						if ( targetId ) {
+							targetElement = document.getElementById( targetId );
+						}
+					}
+					
+					// If no target found, try to find casino-list section
+					if ( ! targetElement ) {
+						targetElement = document.querySelector( '.casino-list' );
+					}
+					
+					// If still no target, check if URL contains casino-list reference
+					if ( ! targetElement && href.indexOf( 'casino-list' ) !== -1 ) {
+						targetElement = document.querySelector( '.casino-list' );
+					}
+					
+					if ( targetElement ) {
+						e.preventDefault();
+						
+						// Calculate offset for header (if fixed)
+						var headerElement = document.getElementById( 'masthead' );
+						var headerOffset = 0;
+						
+						if ( headerElement ) {
+							var headerStyles = window.getComputedStyle( headerElement );
+							var headerPosition = headerStyles.getPropertyValue( 'position' );
+							
+							if ( headerPosition === 'fixed' || headerPosition === 'sticky' ) {
+								headerOffset = headerElement.offsetHeight;
+							}
+						}
+						
+						var targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+						
+						window.scrollTo( {
+							top: targetPosition,
+							behavior: 'smooth'
+						} );
+					}
+				} );
+			}
 		} );
 	}
 

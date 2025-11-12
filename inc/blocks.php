@@ -245,6 +245,8 @@ function nebulite_render_block_hero( $block, $content = '', $is_preview = false 
 	$title            = get_field( 'title' );
 	$description      = get_field( 'description' );
 	$results          = get_field( 'results' );
+	$cta              = get_field( 'cta' );
+	$featured_casinos = get_field( 'featured_casinos' );
 	$margin_bottom    = get_field( 'margin_bottom' ) ?: 'medium'; // Default to medium
 
 	$vars = array(
@@ -253,6 +255,8 @@ function nebulite_render_block_hero( $block, $content = '', $is_preview = false 
 		'title'           => $title,
 		'description'     => $description,
 		'results'         => $results,
+		'cta'             => $cta,
+		'featured_casinos' => $featured_casinos,
 		'margin_bottom'   => nebulite_get_margin_bottom( $margin_bottom ),
 	);
 

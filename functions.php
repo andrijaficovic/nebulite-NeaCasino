@@ -137,15 +137,118 @@ function nebulite_widgets_init() {
 add_action( 'widgets_init', 'nebulite_widgets_init' );
 
 /**
+ * Add resource hints for better performance.
+ */
+function nebulite_resource_hints( $urls, $relation_type ) {
+	if ( 'dns-prefetch' === $relation_type ) {
+		$urls[] = '//fonts.googleapis.com';
+		$urls[] = '//fonts.gstatic.com';
+	}
+	if ( 'preconnect' === $relation_type ) {
+		$urls[] = array(
+			'href' => 'https://fonts.googleapis.com',
+		);
+		$urls[] = array(
+			'href' => 'https://fonts.gstatic.com',
+			'crossorigin',
+		);
+	}
+	return $urls;
+}
+add_filter( 'wp_resource_hints', 'nebulite_resource_hints', 10, 2 );
+
+/**
+ * Output critical CSS inline in head.
+ */
+function nebulite_critical_css() {
+	?>
+	<style id="critical-css">
+		/* Critical above-the-fold styles */
+		body{font-family:Ubuntu,-apple-system,BlinkMacSystemFont,'Segoe UI',Tahoma,sans-serif;background:#170d0d;color:#fff;margin:0;padding:0}
+		.site-header{position:sticky;top:0;z-index:100;background:#170d0d}
+		.hero-block{position:relative;width:100%;min-height:500px;overflow:hidden;background-size:contain;background-position:right bottom;background-color:#0a0021;display:flex;align-items:center;padding:4rem 0}
+		.hero-block::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:1;pointer-events:none}
+		.container{max-width:1200px;margin:0 auto;padding:0 1.5rem;position:relative;z-index:2}
+		@media (max-width:768px){.hero-block{min-height:400px;padding:3rem 0}.hero-block::before{background:rgba(0,0,0,.4)}}
+	</style>
+	<?php
+}
+add_action( 'wp_head', 'nebulite_critical_css', 1 );
+
+/**
+ * Preload LCP hero image by checking page content for hero blocks.
+ */
+function nebulite_preload_hero_image() {
+	// Only on singular pages
+	if ( ! is_singular() ) {
+		return;
+	}
+	
+	$post = get_queried_object();
+	if ( ! $post || ! isset( $post->post_content ) ) {
+		return;
+	}
+	
+	// Parse blocks to find hero block
+	$blocks = parse_blocks( $post->post_content );
+	foreach ( $blocks as $block ) {
+		if ( 'acf/hero' === $block['blockName'] ) {
+			$bg_image = null;
+			
+			// Try multiple ways to get the image
+			// 1. From block attributes (if ACF stores data there)
+			if ( ! empty( $block['attrs']['data']['background_image'] ) ) {
+				$bg_image = $block['attrs']['data']['background_image'];
+			} elseif ( ! empty( $block['attrs']['background_image'] ) ) {
+				$bg_image = $block['attrs']['background_image'];
+			}
+			
+			// 2. Try to get from ACF field directly using block ID
+			if ( empty( $bg_image ) && ! empty( $block['attrs']['id'] ) ) {
+				$bg_image = get_field( 'background_image', $block['attrs']['id'] );
+			}
+			
+			// 3. If still empty, try getting from post context
+			if ( empty( $bg_image ) && function_exists( 'get_field' ) ) {
+				// This is a fallback - try to get first hero block's image
+				// Note: This might not work perfectly as ACF fields are block-specific
+				$bg_image = get_field( 'background_image' );
+			}
+			
+			// Process image URL
+			if ( $bg_image ) {
+				$image_url = '';
+				if ( is_array( $bg_image ) && ! empty( $bg_image['url'] ) ) {
+					$image_url = esc_url( $bg_image['url'] );
+				} elseif ( is_numeric( $bg_image ) ) {
+					$image_url = esc_url( wp_get_attachment_image_url( $bg_image, 'full' ) );
+				} elseif ( is_string( $bg_image ) ) {
+					$image_url = esc_url( $bg_image );
+				}
+				
+				if ( ! empty( $image_url ) ) {
+					echo '<link rel="preload" as="image" href="' . $image_url . '" fetchpriority="high">' . "\n";
+					break; // Only preload first hero image
+				}
+			}
+		}
+	}
+}
+add_action( 'wp_head', 'nebulite_preload_hero_image', 2 );
+
+/**
  * Enqueue scripts and styles.
  */
 function nebulite_scripts() {
+	// Google Fonts - load asynchronously
 	wp_enqueue_style(
 		'nebulite-google-fonts',
 		'https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap',
 		array(),
 		null
 	);
+	
+	// Main stylesheet - will be deferred
 	wp_enqueue_style( 'nebulite-style', get_stylesheet_uri(), array(), _S_VERSION );
 	wp_style_add_data( 'nebulite-style', 'rtl', 'replace' );
 
@@ -156,6 +259,43 @@ function nebulite_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'nebulite_scripts' );
+
+/**
+ * Defer non-critical CSS loading.
+ */
+function nebulite_defer_css( $html, $handle, $href, $media ) {
+	// Defer theme stylesheet (non-critical)
+	if ( 'nebulite-style' === $handle ) {
+		return str_replace( 
+			"media='all'", 
+			"media='print' onload=\"this.media='all'\"", 
+			$html 
+		) . '<noscript>' . $html . '</noscript>';
+	}
+	
+	// Defer Google Fonts (non-critical)
+	if ( 'nebulite-google-fonts' === $handle ) {
+		return str_replace( 
+			"media='all'", 
+			"media='print' onload=\"this.media='all'\"", 
+			$html 
+		) . '<noscript>' . $html . '</noscript>';
+	}
+	
+	return $html;
+}
+add_filter( 'style_loader_tag', 'nebulite_defer_css', 10, 4 );
+
+/**
+ * Load jQuery asynchronously (defer).
+ */
+function nebulite_defer_jquery( $tag, $handle ) {
+	if ( 'jquery-core' === $handle ) {
+		return str_replace( "></script>", " defer></script>", $tag );
+	}
+	return $tag;
+}
+add_filter( 'script_loader_tag', 'nebulite_defer_jquery', 10, 2 );
 
 /**
  * Implement the Custom Header feature.

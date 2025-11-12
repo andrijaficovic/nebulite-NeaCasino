@@ -249,6 +249,9 @@ function nebulite_render_block_hero( $block, $content = '', $is_preview = false 
 	$featured_casinos = get_field( 'featured_casinos' );
 	$margin_bottom    = get_field( 'margin_bottom' ) ?: 'medium'; // Default to medium
 
+	// Note: Hero image preload is handled in functions.php via nebulite_preload_hero_image()
+	// which parses blocks before rendering to add preload link early in <head>
+
 	$vars = array(
 		'block_id'        => $block_id,
 		'background_image' => $background_image,

@@ -17,18 +17,17 @@ get_header();
 			<p class="error-404__status" aria-hidden="true">404</p>
 
 			<h1 class="error-404__title">
-				<?php esc_html_e( 'Out of luck this time?', 'nebulite' ); ?>
+				<?php esc_html_e( 'Η σελίδα δεν βρέθηκε', 'nebulite' ); ?>
 			</h1>
 
 			<p class="error-404__subtitle">
-				<?php esc_html_e( 'The page you’re after just cashed out. Spin your way back to the homepage and try for another win!' ); ?>
+				<?php esc_html_e( 'Η σελίδα που αναζητάτε δεν υπάρχει πλέον. Επιστρέψτε στην αρχική σελίδα και συνεχίστε την περιήγησή σας!', 'nebulite' ); ?>
 			</p>
-			
 
 			<div class="error-404__actions">
-				<a class="error-404__button error-404__button--primary" href="<?php echo esc_url( home_url(  ) ); ?>">
-					<?php esc_html_e( 'Explore Casinos', 'nebulite' ); ?>
-				</a>				
+				<a class="error-404__button error-404__button--primary" href="<?php echo esc_url( home_url() ); ?>">
+					<?php esc_html_e( 'Αρχική Σελίδα', 'nebulite' ); ?>
+				</a>
 			</div>
 		</div>
 	</section><!-- .error-404 -->

@@ -25,7 +25,7 @@ if ( false === $ids_json ) {
 ?>
 
 <section
-	id="<?php echo esc_attr( $block_id ); ?>"
+	id="casino-list"
 	class="casino-list"
 	data-casino-ids="<?php echo esc_attr( $ids_json ); ?>"
 	data-offset="<?php echo (int) $offset; ?>"

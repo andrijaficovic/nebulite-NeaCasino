@@ -189,6 +189,9 @@ if ( defined( 'JETPACK__VERSION' ) ) {
  */
 require get_template_directory() . '/inc/blocks.php';
 
+// Theme options
+require get_template_directory() . '/inc/theme-options.php';
+
 // Limit post revisions (database optimization)
 if ( ! defined( 'WP_POST_REVISIONS' ) ) {
 	define( 'WP_POST_REVISIONS', 3 );

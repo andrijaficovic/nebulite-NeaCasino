@@ -21,7 +21,7 @@
 		justify-content: space-between;
 		padding: 1.5rem 0;
 
-		@media (max-width: 1024px) {
+		@media (max-width: 1060px) {
 			padding: 1rem 0;
 		}
 	}
@@ -59,7 +59,7 @@
 		padding: 0;
 		position: relative;
 
-		@media (max-width: 1024px) {
+		@media (max-width: 1060px) {
 			position: fixed;
 			top: 0;
 			right: -100%;
@@ -81,7 +81,7 @@
 			padding: 0;
 			position: relative;
 
-			@media (max-width: 1024px) {
+			@media (max-width: 1060px) {
 				width: 100%;
 				border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 			}
@@ -107,19 +107,19 @@
 						margin-left: 0.5rem;
 						pointer-events: none;
 
-						@media (max-width: 1024px) {
+						@media (max-width: 1060px) {
 							right: 0;
 						}
 					}
 
-					@media (max-width: 1024px) {
+					@media (max-width: 1060px) {
 						padding-right: 2.5rem;
 					}
 				}
 
 				// Dropdown arrow rotation on hover (desktop) or active (mobile)
 				&:hover > a::after {
-					@media (min-width: 1025px) {
+					@media (min-width: 1061px) {
 						transform: translateY(-50%) rotate(180deg);
 					}
 				}
@@ -142,7 +142,7 @@
 			align-items: center;
 			white-space: nowrap;
 
-			@media (max-width: 1024px) {
+			@media (max-width: 1060px) {
 				padding: 1rem 0;
 				width: 100%;
 				font-size: 1rem;
@@ -173,7 +173,7 @@
 			z-index: 1000;
 			border: 1px solid rgba(255, 255, 255, 0.1);
 
-			@media (max-width: 1024px) {
+			@media (max-width: 1060px) {
 				position: static;
 				width: 100%;
 				background: rgba(255, 255, 255, 0.05);
@@ -194,7 +194,7 @@
 				margin: 0;
 				padding: 0;
 
-				@media (max-width: 1024px) {
+				@media (max-width: 1060px) {
 					border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 					width: 100%;
 				}
@@ -210,7 +210,7 @@
 					border-radius: 0;
 					transition: background 0.2s ease, color 0.2s ease;
 
-					@media (max-width: 1024px) {
+					@media (max-width: 1060px) {
 						padding: 0.75rem 1rem 0.75rem 2rem;
 						font-size: 0.9375rem;
 					}
@@ -237,7 +237,7 @@
 
 		// Show sub-menu on hover (desktop)
 		.menu-item-has-children:hover > .sub-menu {
-			@media (min-width: 1025px) {
+			@media (min-width: 1061px) {
 				opacity: 1;
 				visibility: visible;
 				transform: translateY(0);
@@ -247,7 +247,7 @@
 
 		// Keep sub-menu open when hovering over it
 		.sub-menu:hover {
-			@media (min-width: 1025px) {
+			@media (min-width: 1061px) {
 				opacity: 1;
 				visibility: visible;
 				transform: translateY(0);
@@ -256,7 +256,7 @@
 
 		// Show sub-menu when open (mobile)
 		.menu-item-has-children.submenu-open > .sub-menu {
-			@media (max-width: 1024px) {
+			@media (max-width: 1060px) {
 				opacity: 1 !important;
 				visibility: visible !important;
 				max-height: 1000px !important;
@@ -268,7 +268,7 @@
 
 	&.toggled {
 		.nav-menu {
-			@media (max-width: 1024px) {
+			@media (max-width: 1060px) {
 				right: 0;
 			}
 		}
@@ -289,7 +289,7 @@
 	align-items: center;
 	justify-content: center;
 
-	@media (max-width: 1024px) {
+	@media (max-width: 1060px) {
 		display: flex;
 	}
 

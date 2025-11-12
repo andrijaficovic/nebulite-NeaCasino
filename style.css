@@ -680,18 +680,17 @@ textarea {
 /* Navigation
 --------------------------------------------- */
 .site-header {
-	position: fixed;
+	position: sticky;
 	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 1000;
-	background: transparent;
-	transition: background 0.3s ease, backdrop-filter 0.3s ease;
+	z-index: 100;
+	background: #170d0d;
+	backdrop-filter: none;
+	box-shadow: none;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .site-header.scrolled {
-	background: rgba(10, 2, 33, 0.95);
-	backdrop-filter: blur(10px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .site-header .container {
@@ -755,7 +754,7 @@ textarea {
 		width: 80%;
 		max-width: 400px;
 		height: 100vh;
-		background: rgba(10, 2, 33, 0.98);
+		background: #170d0d;
 		flex-direction: column;
 		align-items: flex-start;
 		padding: 5rem 2rem 2rem;
@@ -849,7 +848,7 @@ textarea {
 }
 
 .main-navigation .nav-menu a:hover {
-	color: #a5aafd;
+	color: #f6c543;
 }
 
 .main-navigation .nav-menu .sub-menu {
@@ -857,7 +856,7 @@ textarea {
 	top: calc(100% + 0.5rem);
 	left: 0;
 	min-width: 220px;
-	background: rgba(10, 2, 33, 0.98);
+	background: #170d0d;
 	backdrop-filter: blur(10px);
 	list-style: none;
 	margin: 0;
@@ -927,7 +926,7 @@ textarea {
 
 .main-navigation .nav-menu .sub-menu li a:hover {
 	background: rgba(255, 255, 255, 0.1);
-	color: #a5aafd;
+	color: #f6c543;
 }
 
 .main-navigation .nav-menu .sub-menu li a:first-child {
@@ -1161,8 +1160,8 @@ body.menu-open {
 	margin-top: 2rem;
 	padding: 0.75rem 1.5rem;
 	border: 1px solid #e5e7eb;
-	background: #fff;
-	color: #670303;
+	background: #670303;
+	color: #fff;
 	border-radius: 6px;
 	cursor: pointer;
 	font-size: 0.875rem;
@@ -1175,9 +1174,9 @@ body.menu-open {
 }
 
 .casino-list__load-more:hover {
-	background: #670303;
-	color: #fff;
+	opacity: 0.8;
 	border-color: #9ca3af;
+	cursor: pointer;
 }
 
 .casino-table {
@@ -1520,7 +1519,6 @@ body.menu-open {
 	overflow: hidden;
 	background-size: contain;
 	background-position: right bottom;
-	background-repeat: no-repeat;
 	background-color: #0a0021;
 	display: flex;
 	align-items: center;
@@ -2525,7 +2523,7 @@ body.menu-open {
 }
 
 .site-footer {
-	background: rgba(10, 2, 33, 0.95);
+	background: #170d0d;
 	color: #fff;
 	padding: 3rem 0 2rem;
 }

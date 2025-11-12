@@ -4,8 +4,7 @@
 	min-height: 500px;
 	overflow: hidden; // Prevent overflow
 	background-size: contain; // Show full image without cropping
-	background-position: right bottom; // Position image at right bottom
-	background-repeat: no-repeat;
+	background-position: right bottom; // Position image at right bottom	
 	background-color: #0a0021; // Darker fallback color
 	display: flex;
 	align-items: center;

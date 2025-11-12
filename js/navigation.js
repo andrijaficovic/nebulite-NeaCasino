@@ -135,8 +135,19 @@
 					}
 					
 					// Calculate offset for fixed header
-					const headerHeight = document.getElementById( 'masthead' )?.offsetHeight || 80;
-					const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+					const headerElement = document.getElementById( 'masthead' );
+					let headerOffset = 0;
+
+					if ( headerElement ) {
+						const headerStyles = window.getComputedStyle( headerElement );
+						const headerPosition = headerStyles.getPropertyValue( 'position' );
+
+						if ( headerPosition === 'fixed' || headerPosition === 'sticky' ) {
+							headerOffset = headerElement.offsetHeight;
+						}
+					}
+
+					const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerOffset;
 					
 					window.scrollTo( {
 						top: targetPosition,

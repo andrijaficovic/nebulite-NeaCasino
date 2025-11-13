@@ -224,18 +224,135 @@ function nebulite_preload_hero_image() {
 add_action( 'wp_head', 'nebulite_preload_hero_image', 2 );
 
 /**
+ * Output critical CSS inline in head.
+ * This ensures above-the-fold content is styled immediately.
+ */
+function nebulite_critical_css() {
+	?>
+	<style id="critical-css">
+		/* Critical above-the-fold styles */
+		body{font-family:Ubuntu,-apple-system,BlinkMacSystemFont,'Segoe UI',Tahoma,sans-serif;background:#170d0d;color:#fff;margin:0;padding:0}
+		.site-header{position:sticky;top:0;z-index:100;background:#170d0d}
+		.hero-block{position:relative;width:100%;min-height:500px;overflow:hidden;background-size:contain;background-position:right bottom;background-color:#0a0021;display:flex;align-items:center;padding:4rem 0}
+		.hero-block::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.3);z-index:1;pointer-events:none}
+		.container{max-width:1250px;margin:0 auto;padding:0 1.5rem;position:relative;z-index:2}
+		.hero-block__title{margin:0 0 1.5rem;font-size:3rem;font-weight:700;line-height:1.2;color:#fff}
+		.hero-block__description{margin:0 0 3rem;font-size:1.25rem;line-height:1.6;color:rgba(255,255,255,.9)}
+		@media (max-width:768px){.hero-block{min-height:400px;padding:3rem 0}.hero-block::before{background:rgba(0,0,0,.4)}.hero-block__title{font-size:2rem}.hero-block__description{font-size:1rem;margin-bottom:2rem}}
+	</style>
+	<?php
+}
+add_action( 'wp_head', 'nebulite_critical_css', 1 );
+
+/**
+ * Add resource hints for Google Fonts (preconnect, dns-prefetch).
+ */
+function nebulite_resource_hints( $urls, $relation_type ) {
+	if ( 'dns-prefetch' === $relation_type ) {
+		$urls[] = '//fonts.googleapis.com';
+		$urls[] = '//fonts.gstatic.com';
+	}
+	if ( 'preconnect' === $relation_type ) {
+		$urls[] = array(
+			'href' => 'https://fonts.googleapis.com',
+		);
+		$urls[] = array(
+			'href' => 'https://fonts.gstatic.com',
+			'crossorigin',
+		);
+	}
+	return $urls;
+}
+add_filter( 'wp_resource_hints', 'nebulite_resource_hints', 10, 2 );
+
+/**
+ * Remove WordPress block library CSS if no Gutenberg blocks are used.
+ * This reduces unused CSS significantly (~14 KiB savings).
+ */
+function nebulite_remove_unused_block_css() {
+	$has_gutenberg_blocks = false;
+	$post_content = '';
+	
+	// Get post content based on page type
+	if ( is_singular() ) {
+		$post = get_queried_object();
+		if ( $post && isset( $post->post_content ) ) {
+			$post_content = $post->post_content;
+		}
+	} elseif ( is_home() || is_front_page() ) {
+		// For home page, check if it's a static page
+		$page_id = get_option( 'page_on_front' );
+		if ( $page_id ) {
+			$post = get_post( $page_id );
+			if ( $post ) {
+				$post_content = $post->post_content;
+			}
+		}
+	}
+	
+	// If no content found, keep block-library CSS (better safe than sorry)
+	if ( empty( $post_content ) ) {
+		return;
+	}
+	
+	// Parse blocks to check if any Gutenberg blocks (not ACF blocks) are used
+	$blocks = parse_blocks( $post_content );
+	
+	// List of ACF block names (these don't need block-library CSS)
+	$acf_blocks = array( 'acf/hero', 'acf/casino-list', 'acf/why-choose-casino', 'acf/trending-casinos', 'acf/faq-section' );
+	
+	// Recursive function to check blocks
+	$check_blocks = function( $blocks_array ) use ( &$check_blocks, $acf_blocks, &$has_gutenberg_blocks ) {
+		foreach ( $blocks_array as $block ) {
+			// If block has a name and it's not an ACF block, it's a Gutenberg block
+			if ( ! empty( $block['blockName'] ) && ! in_array( $block['blockName'], $acf_blocks, true ) ) {
+				// Skip core blocks that don't need block-library CSS
+				$skip_blocks = array( 'core/html', 'core/shortcode', 'core/freeform', 'core/classic' );
+				if ( ! in_array( $block['blockName'], $skip_blocks, true ) ) {
+					$has_gutenberg_blocks = true;
+					return;
+				}
+			}
+			
+			// Check nested blocks
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$check_blocks( $block['innerBlocks'] );
+				if ( $has_gutenberg_blocks ) {
+					return;
+				}
+			}
+		}
+	};
+	
+	$check_blocks( $blocks );
+	
+	// If no Gutenberg blocks found, remove block-library CSS
+	if ( ! $has_gutenberg_blocks ) {
+		wp_dequeue_style( 'wp-block-library' );
+		wp_dequeue_style( 'wp-block-library-theme' );
+		wp_dequeue_style( 'global-styles' ); // WordPress 5.9+ global styles
+		wp_dequeue_style( 'wc-blocks-style' ); // WooCommerce blocks if present
+	}
+}
+add_action( 'wp_enqueue_scripts', 'nebulite_remove_unused_block_css', 100 );
+
+/**
  * Enqueue scripts and styles.
  */
 function nebulite_scripts() {
+	// Google Fonts - will be deferred
 	wp_enqueue_style(
 		'nebulite-google-fonts',
 		'https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap',
 		array(),
 		null
 	);
+	
+	// Main stylesheet - will be deferred
 	wp_enqueue_style( 'nebulite-style', get_stylesheet_uri(), array(), _S_VERSION );
 	wp_style_add_data( 'nebulite-style', 'rtl', 'replace' );
 
+	// Navigation script - will be deferred
 	wp_enqueue_script( 'nebulite-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
@@ -243,6 +360,74 @@ function nebulite_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'nebulite_scripts' );
+
+/**
+ * Defer non-critical CSS loading.
+ * Uses media="print" trick to load CSS asynchronously.
+ */
+function nebulite_defer_css( $html, $handle, $href, $media ) {
+	// Defer theme stylesheet (non-critical)
+	if ( 'nebulite-style' === $handle ) {
+		return str_replace( 
+			"media='all'", 
+			"media='print' onload=\"this.media='all'\"", 
+			$html 
+		) . '<noscript>' . $html . '</noscript>';
+	}
+	
+	// Defer Google Fonts (non-critical)
+	if ( 'nebulite-google-fonts' === $handle ) {
+		return str_replace( 
+			"media='all'", 
+			"media='print' onload=\"this.media='all'\"", 
+			$html 
+		) . '<noscript>' . $html . '</noscript>';
+	}
+	
+	// Defer WordPress block library CSS (non-critical for above-the-fold)
+	if ( false !== strpos( $handle, 'block-library' ) || false !== strpos( $handle, 'wp-block-library' ) ) {
+		return str_replace( 
+			"media='all'", 
+			"media='print' onload=\"this.media='all'\"", 
+			$html 
+		) . '<noscript>' . $html . '</noscript>';
+	}
+	
+	return $html;
+}
+add_filter( 'style_loader_tag', 'nebulite_defer_css', 10, 4 );
+
+/**
+ * Defer non-critical JavaScript.
+ * All theme scripts are non-critical and can be deferred.
+ */
+function nebulite_defer_scripts( $tag, $handle ) {
+	// List of scripts to defer
+	$defer_scripts = array(
+		'nebulite-navigation',
+		'nebulite-hero',
+		'nebulite-casino-list',
+		'nebulite-trending-casinos',
+	);
+	
+	if ( in_array( $handle, $defer_scripts, true ) ) {
+		// Only add defer if not already present
+		if ( false === strpos( $tag, ' defer' ) && false === strpos( $tag, 'defer=' ) ) {
+			$tag = str_replace( '></script>', ' defer></script>', $tag );
+		}
+	}
+	
+	// Defer jQuery and jQuery Migrate (but keep order for dependencies)
+	if ( 'jquery-core' === $handle || 'jquery-migrate' === $handle ) {
+		// Only add defer if not already present
+		if ( false === strpos( $tag, ' defer' ) && false === strpos( $tag, 'defer=' ) ) {
+			$tag = str_replace( '></script>', ' defer></script>', $tag );
+		}
+	}
+	
+	return $tag;
+}
+add_filter( 'script_loader_tag', 'nebulite_defer_scripts', 10, 2 );
 
 /**
  * Implement the Custom Header feature.

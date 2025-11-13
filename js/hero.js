@@ -6,60 +6,10 @@
 
 		heroBlocks.forEach( function( block ) {
 			var numberElements = block.querySelectorAll( '.hero-block__result-number-value' );
-			var titleElement = block.querySelector( '.hero-block__title' );
-			var descriptionElement = block.querySelector( '.hero-block__description' );
-			var resultsElement = block.querySelector( '.hero-block__results' );
-			var ctaWrapperElement = block.querySelector( '.hero-block__cta-wrapper' );
-			var featuredCasinosElement = block.querySelector( '.hero-block__featured-casinos' );
-
-			// Animate text elements when block enters viewport
-			var textObserver = new IntersectionObserver( function( entries ) {
-				entries.forEach( function( entry ) {
-					if ( entry.isIntersecting ) {
-						// Animate title
-						if ( titleElement ) {
-							setTimeout( function() {
-								titleElement.classList.add( 'hero-block__title--animated' );
-							}, 100 );
-						}
-
-						// Animate description
-						if ( descriptionElement ) {
-							setTimeout( function() {
-								descriptionElement.classList.add( 'hero-block__description--animated' );
-							}, 200 );
-						}
-
-						// Animate results
-						if ( resultsElement ) {
-							setTimeout( function() {
-								resultsElement.classList.add( 'hero-block__results--animated' );
-							}, 400 );
-						}
-
-						// Animate CTA button
-						if ( ctaWrapperElement ) {
-							setTimeout( function() {
-								ctaWrapperElement.classList.add( 'hero-block__cta-wrapper--animated' );
-							}, 600 );
-						}
-
-						// Animate featured casinos
-						if ( featuredCasinosElement ) {
-							setTimeout( function() {
-								featuredCasinosElement.classList.add( 'hero-block__featured-casinos--animated' );
-							}, 800 );
-						}
-
-						textObserver.unobserve( entry.target );
-					}
-				} );
-			}, {
-				threshold: 0.2 // Trigger when 20% visible
-			} );
-
-			// Observe the hero block for text animations
-			textObserver.observe( block );
+			
+			// Note: CSS animations now handle fade-in effects
+			// Content is immediately visible for LCP optimization
+			// JavaScript only handles number counting animation
 
 			// Animate number from 0 to target
 			function animateNumber( element, target ) {

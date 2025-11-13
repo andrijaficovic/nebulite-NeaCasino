@@ -137,6 +137,93 @@ function nebulite_widgets_init() {
 add_action( 'widgets_init', 'nebulite_widgets_init' );
 
 /**
+ * Preload hero block background image for LCP optimization.
+ * Parses post content to find hero blocks and preloads their background images.
+ */
+function nebulite_preload_hero_image() {
+	// Only on singular pages (posts/pages)
+	if ( ! is_singular() ) {
+		return;
+	}
+	
+	$post = get_queried_object();
+	if ( ! $post || ! isset( $post->post_content ) || ! function_exists( 'get_field' ) ) {
+		return;
+	}
+	
+	// Parse blocks to find hero blocks
+	$blocks = parse_blocks( $post->post_content );
+	
+	foreach ( $blocks as $block ) {
+		if ( 'acf/hero' === $block['blockName'] ) {
+			$bg_image = null;
+			
+			// Try to get background image from block ID (ACF stores data per block)
+			if ( ! empty( $block['attrs']['id'] ) ) {
+				$bg_image = get_field( 'background_image', $block['attrs']['id'] );
+			}
+			
+			// Fallback: Try to get from block data attributes
+			if ( empty( $bg_image ) && ! empty( $block['attrs']['data']['background_image'] ) ) {
+				$bg_image = $block['attrs']['data']['background_image'];
+			}
+			
+			// Fallback: Try post context (may not work for ACF blocks)
+			if ( empty( $bg_image ) ) {
+				$bg_image = get_field( 'background_image' );
+			}
+			
+			// Process image URL
+			if ( ! empty( $bg_image ) ) {
+				$image_url = '';
+				if ( is_array( $bg_image ) && ! empty( $bg_image['url'] ) ) {
+					$image_url = esc_url( $bg_image['url'] );
+				} elseif ( is_numeric( $bg_image ) ) {
+					$image_url = esc_url( wp_get_attachment_image_url( $bg_image, 'full' ) );
+				} elseif ( is_string( $bg_image ) ) {
+					$image_url = esc_url( $bg_image );
+				}
+				
+				if ( ! empty( $image_url ) ) {
+					echo '<link rel="preload" as="image" href="' . $image_url . '" fetchpriority="high">' . "\n";
+					break; // Only preload first hero image
+				}
+			}
+		}
+		
+		// Recursively check nested blocks (if hero block is inside a group/column)
+		if ( ! empty( $block['innerBlocks'] ) ) {
+			foreach ( $block['innerBlocks'] as $inner_block ) {
+				if ( 'acf/hero' === $inner_block['blockName'] ) {
+					// Same logic as above for inner blocks
+					$bg_image = null;
+					if ( ! empty( $inner_block['attrs']['id'] ) ) {
+						$bg_image = get_field( 'background_image', $inner_block['attrs']['id'] );
+					}
+					
+					if ( ! empty( $bg_image ) ) {
+						$image_url = '';
+						if ( is_array( $bg_image ) && ! empty( $bg_image['url'] ) ) {
+							$image_url = esc_url( $bg_image['url'] );
+						} elseif ( is_numeric( $bg_image ) ) {
+							$image_url = esc_url( wp_get_attachment_image_url( $bg_image, 'full' ) );
+						} elseif ( is_string( $bg_image ) ) {
+							$image_url = esc_url( $bg_image );
+						}
+						
+						if ( ! empty( $image_url ) ) {
+							echo '<link rel="preload" as="image" href="' . $image_url . '" fetchpriority="high">' . "\n";
+							break 2; // Break out of both loops
+						}
+					}
+				}
+			}
+		}
+	}
+}
+add_action( 'wp_head', 'nebulite_preload_hero_image', 2 );
+
+/**
  * Enqueue scripts and styles.
  */
 function nebulite_scripts() {

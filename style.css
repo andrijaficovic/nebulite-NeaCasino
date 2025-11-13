@@ -1512,6 +1512,32 @@ body.menu-open {
 
 /* Hero Block
 --------------------------------------------- */
+@keyframes heroFadeInUp {
+
+	from {
+		opacity: 1;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes heroSubtleFadeIn {
+
+	from {
+		opacity: 0.98;
+		transform: translateY(5px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
 .hero-block {
 	position: relative;
 	width: 100%;
@@ -1594,14 +1620,8 @@ body.menu-open {
 	font-weight: 700;
 	line-height: 1.2;
 	color: #fff;
-	opacity: 0;
-	transform: translateY(30px);
-	transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.hero-block__title.hero-block__title--animated {
-	opacity: 1;
-	transform: translateY(0);
+	animation: heroFadeInUp 0.6s ease-out;
+	will-change: transform;
 }
 
 .hero-block__title span {
@@ -1619,19 +1639,21 @@ body.menu-open {
 	}
 }
 
+@media (prefers-reduced-motion: reduce) {
+
+	.hero-block__title {
+		animation: none;
+		will-change: auto;
+	}
+}
+
 .hero-block__description {
 	margin: 0 0 3rem;
 	font-size: 1.25rem;
 	line-height: 1.6;
 	color: rgba(255, 255, 255, 0.9);
-	opacity: 0;
-	transform: translateY(30px);
-	transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
-}
-
-.hero-block__description.hero-block__description--animated {
-	opacity: 1;
-	transform: translateY(0);
+	animation: heroSubtleFadeIn 0.6s ease-out 0.15s both;
+	will-change: transform;
 }
 
 .hero-block__description p {
@@ -1650,25 +1672,35 @@ body.menu-open {
 	}
 }
 
+@media (prefers-reduced-motion: reduce) {
+
+	.hero-block__description {
+		animation: none;
+		will-change: auto;
+	}
+}
+
 .hero-block__results {
 	display: flex;
 	gap: 3rem;
 	justify-content: flex-start;
 	flex-wrap: wrap;
-	opacity: 0;
-	transform: translateY(30px);
-	transition: opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s;
-}
-
-.hero-block__results.hero-block__results--animated {
-	opacity: 1;
-	transform: translateY(0);
+	animation: heroSubtleFadeIn 0.6s ease-out 0.3s both;
+	will-change: transform;
 }
 
 @media (max-width: 768px) {
 
 	.hero-block__results {
 		gap: 2rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.hero-block__results {
+		animation: none;
+		will-change: auto;
 	}
 }
 
@@ -1712,20 +1744,22 @@ body.menu-open {
 
 .hero-block__cta-wrapper {
 	margin-top: 2.5rem;
-	opacity: 0;
-	transform: translateY(30px);
-	transition: opacity 0.8s ease 0.6s, transform 0.8s ease 0.6s;
-}
-
-.hero-block__cta-wrapper.hero-block__cta-wrapper--animated {
-	opacity: 1;
-	transform: translateY(0);
+	animation: heroSubtleFadeIn 0.6s ease-out 0.45s both;
+	will-change: transform;
 }
 
 @media (max-width: 768px) {
 
 	.hero-block__cta-wrapper {
 		margin-top: 2rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.hero-block__cta-wrapper {
+		animation: none;
+		will-change: auto;
 	}
 }
 
@@ -1767,14 +1801,8 @@ body.menu-open {
 	grid-template-columns: repeat(3, 1fr);
 	gap: 1.5rem;
 	margin-top: 4rem;
-	opacity: 0;
-	transform: translateY(30px);
-	transition: opacity 0.8s ease 0.8s, transform 0.8s ease 0.8s;
-}
-
-.hero-block__featured-casinos.hero-block__featured-casinos--animated {
-	opacity: 1;
-	transform: translateY(0);
+	animation: heroSubtleFadeIn 0.6s ease-out 0.6s both;
+	will-change: transform;
 }
 
 @media (max-width: 1024px) {
@@ -1791,6 +1819,14 @@ body.menu-open {
 		grid-template-columns: 1fr;
 		margin-top: 3rem;
 		gap: 1rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.hero-block__featured-casinos {
+		animation: none;
+		will-change: auto;
 	}
 }
 

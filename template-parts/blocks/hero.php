@@ -109,7 +109,7 @@ if ( $margin_bottom_value ) {
 							<img src="<?php echo $casino_img_url; ?>" alt="<?php echo esc_attr( get_the_title( $casino_id ) ); ?>" loading="lazy">
 						</div>
 						<div class="hero-block__featured-casino-info">
-							<h3 class="hero-block__featured-casino-name"><?php echo esc_html( get_the_title( $casino_id ) ); ?></h3>
+							<h2 class="hero-block__featured-casino-name"><?php echo esc_html( get_the_title( $casino_id ) ); ?></h2>
 							<?php if ( ! empty( $casino_bonus ) ) : ?>
 								<div class="hero-block__featured-casino-bonus"><?php echo wp_kses_post( $casino_bonus ); ?></div>
 							<?php endif; ?>
